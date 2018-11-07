@@ -1,0 +1,3 @@
+POST     /send            controllers.SendEventController.send
+
+POST     /close            controllers.SendEventController.close
