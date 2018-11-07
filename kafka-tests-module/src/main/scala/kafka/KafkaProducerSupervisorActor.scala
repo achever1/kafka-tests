@@ -28,20 +28,16 @@ class KafkaProducerSupervisorActor()(
   val config = context.system.settings.config
   val kafkaProducer: ActorRef = context.actorOf(KafkaProducerActor.props())
 
-  val maxNrOfRetries: Int = config.getInt("rating.actor.supervision.maxNrOfRetries")
-  val withinTimeRange: FiniteDuration =
-    Duration
-      .apply(config.getString("rating.actor.supervision.withinTimeRange"))
-      .asInstanceOf[FiniteDuration]
-
   override val supervisorStrategy =
-    OneForOneStrategy(maxNrOfRetries, withinTimeRange) {
+    OneForOneStrategy(1000, Duration("1 day").asInstanceOf[FiniteDuration]) {
       case e: Exception ⇒
         logger.warn("KafkaSupervisorActor restarting a failed child actor", e)
         Restart
     }
 
   override def receive: Receive = {
-    case m => kafkaProducer ! m
+    case m =>
+      logger.info(s"in supervisor forwarding to producer")
+      kafkaProducer ! m
   }
 }

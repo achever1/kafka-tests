@@ -3,7 +3,7 @@ package controllers
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import com.google.inject.Inject
-import kafka.KafkaProducerActor
+import kafka.KafkaProducerSupervisorActor
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
@@ -13,7 +13,7 @@ class SendEventController @Inject()(cc: ControllerComponents)(
     extends AbstractController(cc) {
 
   val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
-  val producer = system.actorOf(KafkaProducerActor.props())
+  val producer = system.actorOf(KafkaProducerSupervisorActor.props())
 
   def send = Action {
     logger.info("Post a msg")
